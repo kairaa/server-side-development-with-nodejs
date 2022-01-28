@@ -34,3 +34,12 @@ Go to VSCode to see generated scaffold
   code .
 ```
 
+# Second Part of the App
+
+Install mongoose and mongoose-currency
+We need currency support in mongoose schema, so we install mongoose-currency
+
+```bash
+  npm i mongoose mongoose-currency
+```
+
