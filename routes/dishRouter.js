@@ -9,8 +9,6 @@ const dishRouter = express.Router()
 dishRouter.use(bodyParser.json())
 
 dishRouter.route('/')
-    //when we get get method, firstly the code which inside all method will be executed,
-    //then get method will be executed
     .get((req, res, next) => {
         Dishes.find({})
         .then((dishes) => {
