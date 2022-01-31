@@ -43,3 +43,7 @@ We need currency support in mongoose schema, so we install mongoose-currency
   npm i mongoose mongoose-currency
 ```
 
+# Cookies
+
+Cookies helps us to keep us signed in. So we don't need log in every time. When I test cookies on postman, in firsty time, i had to enter username and password, but in second time i don't have to enter them. The problem on the postman is, if the first is autorized and in second try, if I enter wrong values, it accept these values. 
+

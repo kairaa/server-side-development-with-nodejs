@@ -32,7 +32,8 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+//defining a secret key (it does not have to be meaningful)
+app.use(cookieParser('12345-56890-09876-54321'));
 
 app.use(auth);
 
@@ -40,34 +41,56 @@ app.use(auth);
 //the reason is when we do not use incognito tab, browser cache
 //username and password
 function auth(req, res, next){
-  console.log(req.headers);
+  console.log(req.signedCookies);
 
-  var authHeader = req.headers.authorization;
+  //if the incoming request does not include the user field in the signed cookies
+  //it means user does not authorized yet
+  if(!req.signedCookies.user){
+    var authHeader = req.headers.authorization;
 
-  //if autHeader is null
-  if(!authHeader){
-    var err = new Error('You are not authenticated');
-    
-    res.setHeader('WWW-Authenticate', 'Basic');
-    err.status = 401;
-    return next(err);
+    //if authHeader is null
+    if(!authHeader){
+      var err = new Error('You are not authenticated');
+      
+      res.setHeader('WWW-Authenticate', 'Basic');
+      err.status = 401;
+      return next(err);
+    }
+
+    //to extract username and password, it contains two item: username and password
+    var auth = new Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
+
+    var username = auth[0];
+    var password = auth[1];
+
+    //if authentication succesful
+    if(username === 'admin' && password === 'password'){
+      //cookie setup
+      // first parameter should be equal with !req.signedCookies.user 's user part
+      res.cookie('user', 'admin', {signed: true})
+      next();
+    }
+    else{
+      var err = new Error('You are not authenticated');
+      
+      res.setHeader('WWW-Authenticate', 'Basic');
+      err.status = 401;
+      return next(err);
+    }
   }
-
-  //to extract username and password, it contains two item: username and password
-  var auth = new Buffer(authHeader.split(' ')[1], 'base64').toString().split(':');
-
-  var username = auth[0];
-  var password = auth[1];
-
-  if(username === 'admin' && password === 'password'){
-    next();
-  }
+  //if user authorized already
   else{
-    var err = new Error('You are not authenticated');
-    
-    res.setHeader('WWW-Authenticate', 'Basic');
-    err.status = 401;
-    return next(err);
+    if(req.signedCookies.user === 'admin'){
+      //allows request
+      next();
+    }
+    //user not authenticated
+    else{
+      var err = new Error('You are not authenticated');
+      
+      err.status = 401;
+      return next(err);
+    }
   }
 }
 
