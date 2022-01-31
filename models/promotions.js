@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-//when i try to use mongoose-currecy, i get the error, because of this i did not add it
+//added but not working
+//require('mongoose-currency').loadType.Currency;
+//const Currency = mongoose.Types.Currency;
+
 const promotionSchema = new Schema({
     name:{
         type: String,
@@ -16,8 +19,16 @@ const promotionSchema = new Schema({
         type: String,
         default: '',
     },
+    // price:{
+    //     type: Currency,
+    //     required: true
+    // },
     description:{
         type: String,
+        required: true
+    },
+    featured:{
+        type: Boolean,
         required: true
     }
 },{
