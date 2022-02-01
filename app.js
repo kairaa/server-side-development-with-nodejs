@@ -3,6 +3,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var session = require('express-session');
+var FileStore = require('session-file-store')(session);
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -33,7 +35,16 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 //defining a secret key (it does not have to be meaningful)
-app.use(cookieParser('12345-56890-09876-54321'));
+//app.use(cookieParser('12345-56890-09876-54321'));
+
+//session middleware setup
+app.use(session({
+  name: 'session-id',
+  secret: '12345-56890-09876-54321',
+  saveUninitialized: false,
+  resave: false,
+  store: new FileStore()
+}));
 
 app.use(auth);
 
@@ -41,11 +52,11 @@ app.use(auth);
 //the reason is when we do not use incognito tab, browser cache
 //username and password
 function auth(req, res, next){
-  console.log(req.signedCookies);
+  console.log(req.session);
 
   //if the incoming request does not include the user field in the signed cookies
   //it means user does not authorized yet
-  if(!req.signedCookies.user){
+  if(!req.session.user){
     var authHeader = req.headers.authorization;
 
     //if authHeader is null
@@ -66,8 +77,13 @@ function auth(req, res, next){
     //if authentication succesful
     if(username === 'admin' && password === 'password'){
       //cookie setup
+      
       // first parameter should be equal with !req.signedCookies.user 's user part
-      res.cookie('user', 'admin', {signed: true})
+      //for cookies
+      //res.cookie('user', 'admin', {signed: true})
+      
+      //for session
+      req.session.user = 'admin';
       next();
     }
     else{
@@ -80,7 +96,7 @@ function auth(req, res, next){
   }
   //if user authorized already
   else{
-    if(req.signedCookies.user === 'admin'){
+    if(req.session.user === 'admin'){
       //allows request
       next();
     }
