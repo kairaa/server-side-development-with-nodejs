@@ -46,6 +46,9 @@ app.use(session({
   store: new FileStore()
 }));
 
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+
 app.use(auth);
 
 //to test auth function, we open an incognito tab in our browser
@@ -57,54 +60,20 @@ function auth(req, res, next){
   //if the incoming request does not include the user field in the signed cookies
   //it means user does not authorized yet
   if(!req.session.user){
-    var authHeader = req.headers.authorization;
-
-    //if authHeader is null
-    if(!authHeader){
-      var err = new Error('You are not authenticated');
-      
-      res.setHeader('WWW-Authenticate', 'Basic');
-      err.status = 401;
-      return next(err);
-    }
-
-    //to extract username and password, it contains two item: username and password
-    var auth = new Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
-
-    var username = auth[0];
-    var password = auth[1];
-
-    //if authentication succesful
-    if(username === 'admin' && password === 'password'){
-      //cookie setup
-      
-      // first parameter should be equal with !req.signedCookies.user 's user part
-      //for cookies
-      //res.cookie('user', 'admin', {signed: true})
-      
-      //for session
-      req.session.user = 'admin';
-      next();
-    }
-    else{
-      var err = new Error('You are not authenticated');
-      
-      res.setHeader('WWW-Authenticate', 'Basic');
-      err.status = 401;
-      return next(err);
-    }
+    var err = new Error('You are not authenticated');
+    err.status = 401;
+    return next(err);
   }
   //if user authorized already
   else{
-    if(req.session.user === 'admin'){
+    if(req.session.user === 'authenticated'){
       //allows request
       next();
     }
     //user not authenticated
     else{
       var err = new Error('You are not authenticated');
-      
-      err.status = 401;
+      err.status = 403;
       return next(err);
     }
   }
@@ -112,8 +81,6 @@ function auth(req, res, next){
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
 
 app.use('/dishes', dishRouter);
 app.use('/leaders', leaderRouter);
