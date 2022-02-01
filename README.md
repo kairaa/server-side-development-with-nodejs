@@ -45,13 +45,26 @@ We need currency support in mongoose schema, so we install mongoose-currency
 
 # Cookies
 
-Cookies helps us to keep us signed in. So we don't need log in every time. When I test cookies on postman, in firsty time, i had to enter username and password, but in second time i don't have to enter them. The problem on the postman is, if the first is autorized and in second try, if I enter wrong values, it accept these values. 
+Cookies helps us to keep us signed in. So we don't need log in every time. When I test cookies on postman, in firsty time, i had to enter username and password, but in second time i don't have to enter them. The problem on the postman is, if the first is autorized and in second try, if I enter wrong values, it accept these values.
 
 # Sessions
+
 Insead of cookies, this time we use express-session for authentication. For keeping track of sessions, we use session-file-store.
 
 ## Sessions Part 2
+
 Added sign up, log in and logout
 
 For sign up and log in we use post method, for logout we use get method
 
+# User Authentication with Passport and JSON Web Token
+
+In the previous versions, we couldn't use GET operations if we are not authorized (and also other operations). But now, we can perform GET operations even though we don't authorized
+
+To perform POST, PUT or DELETE operations on Postman, we should add our token as key to Header
+
+For example
+
+```bash
+  bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWY5NGYyYTIyZDhmYWUwY2VjNDBlZjAiLCJpYXQiOjE2NDM3NDg4NDMsImV4cCI6MTY0Mzc1MjQ0M30.WwIIb3nFaJhsFYmnuzxdPB21Bcch72ZaFbEM1QaFQxM
+```
