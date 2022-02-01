@@ -12,7 +12,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const dishRouter = require('./routes/dishRouter');
 const promoRouter = require('./routes/promoRouter');
-const leaderRouter = require('./routes/leaderRouter')
+const leaderRouter = require('./routes/leaderRouter');
 
 const mongoose = require('mongoose');
 
@@ -21,11 +21,14 @@ const Dishes = require('./models/dishes');
 const url = 'mongodb://localhost:27017/conFusion';
 const connect = mongoose.connect(url);
 
-connect.then((db) => {
-  console.log('Connected correctly to server');
-}, (err) => {
-  console.log(err);
-});
+connect.then(
+  (db) => {
+    console.log('Connected correctly to server');
+  },
+  (err) => {
+    console.log(err);
+  }
+);
 
 var app = express();
 
@@ -40,13 +43,15 @@ app.use(express.urlencoded({ extended: false }));
 //app.use(cookieParser('12345-56890-09876-54321'));
 
 //session middleware setup
-app.use(session({
-  name: 'session-id',
-  secret: '12345-56890-09876-54321',
-  saveUninitialized: false,
-  resave: false,
-  store: new FileStore()
-}));
+app.use(
+  session({
+    name: 'session-id',
+    secret: '12345-56890-09876-54321',
+    saveUninitialized: false,
+    resave: false,
+    store: new FileStore(),
+  })
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -54,16 +59,16 @@ app.use(passport.session());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-function auth(req, res, next){
+function auth(req, res, next) {
   //if the incoming request does not include the user field in the signed cookies
   //it means user does not authorized yet
-  if(!req.user){
+  if (!req.user) {
     var err = new Error('You are not authenticated');
     err.status = 403;
     return next(err);
   }
   //if user authorized already
-  else{
+  else {
     next();
   }
 }
@@ -72,19 +77,18 @@ app.use(auth);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 app.use('/dishes', dishRouter);
 app.use('/leaders', leaderRouter);
 app.use('/promotions', promoRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
 //returns error message
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
