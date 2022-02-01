@@ -50,3 +50,8 @@ Cookies helps us to keep us signed in. So we don't need log in every time. When 
 # Sessions
 Insead of cookies, this time we use express-session for authentication. For keeping track of sessions, we use session-file-store.
 
+## Sessions Part 2
+Added sign up, log in and logout
+
+For sign up and log in we use post method, for logout we use get method
+
