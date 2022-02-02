@@ -23,7 +23,7 @@ promoRouter
       )
       .catch((err) => next(err));
   })
-  .post(authenticate.verifyUser, (req, res, next) => {
+  .post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     Promotions.create(req.body)
       .then(
         (promotion) => {
@@ -36,7 +36,7 @@ promoRouter
       )
       .catch((err) => next(err));
   })
-  .put(authenticate.verifyUser, (req, res, next) => {
+  .put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     res.statusCode = 403; //not supported
     res.end('PUT operation not supported on /dishes');
   })
@@ -67,11 +67,11 @@ promoRouter
       )
       .catch((err) => next(err));
   })
-  .post(authenticate.verifyUser, (req, res, next) => {
+  .post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     res.statusCode = 403;
     res.end('POST operation not supported on /dishes/' + req.params.dishId);
   })
-  .put(authenticate.verifyUser, (req, res, next) => {
+  .put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     Promotions.findByIdAndUpdate(
       req.params.promoId,
       {
@@ -89,17 +89,21 @@ promoRouter
       )
       .catch((err) => next(err));
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
-    Dishes.findByIdAndRemove(req.params.promoId)
-      .then(
-        (promotion) => {
-          res.statusCode = 200;
-          res.setHeader('Content-Type', 'application/json');
-          res.json(promotion);
-        },
-        (err) => next(err)
-      )
-      .catch((err) => next(err));
-  });
+  .delete(
+    authenticate.verifyUser,
+    authenticate.verifyAdmin,
+    (req, res, next) => {
+      Dishes.findByIdAndRemove(req.params.promoId)
+        .then(
+          (promotion) => {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(promotion);
+          },
+          (err) => next(err)
+        )
+        .catch((err) => next(err));
+    }
+  );
 
 module.exports = promoRouter;

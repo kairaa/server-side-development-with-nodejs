@@ -68,3 +68,31 @@ For example
 ```bash
   bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWY5NGYyYTIyZDhmYWUwY2VjNDBlZjAiLCJpYXQiOjE2NDM3NDg4NDMsImV4cCI6MTY0Mzc1MjQ0M30.WwIIb3nFaJhsFYmnuzxdPB21Bcch72ZaFbEM1QaFQxM
 ```
+
+# Assignment 3
+
+Task 1
+
+You have implemented the verifyAdmin() function in authenticate.js.
+
+The verifyAdmin() function will allow you to proceed forward along the normal path of middleware execution if you are an Admin
+
+The verifyAdmin() function will prevent you from proceeding further if you do not have Admin privileges, and will send an error message to you in the reply.
+
+Task 2
+
+Any one is restricted to perform only the GET operation on the resources/REST API end points.
+
+An Admin (who must be first checked to make sure is an ordinary user), can perform the GET, PUT, POST and DELETE operations on any of the resources/ REST API end points.
+
+Task 3
+
+A GET operation on http://localhost:3000/users by an Admin will return the details of the registered users
+
+An ordinary user (without Admin privileges) cannot perform the GET operation on http://localhost:3000/users.
+
+Task 4
+
+A registered user is allowed to update and delete his/her own comments.
+
+Any user or an Admin cannot update or delete the comment posted by other users.
