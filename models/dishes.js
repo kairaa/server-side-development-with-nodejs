@@ -13,9 +13,10 @@ const commentSchema = new Schema(
       type: String,
       required: true,
     },
+    //author references to the ID of the user document
     author: {
-      type: String,
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
     },
   },
   {
