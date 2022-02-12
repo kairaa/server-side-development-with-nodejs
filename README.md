@@ -96,3 +96,11 @@ Task 4
 A registered user is allowed to update and delete his/her own comments.
 
 Any user or an Admin cannot update or delete the comment posted by other users.
+
+# HTTPS and Secure Communication
+
+```bash
+  openssl genrsa 1024 > private.key
+  openssl req -new -key private.key -out cert.csr
+  openssl x509 -req -in cert.csr -signkey private.key -out certificate.pem
+```
