@@ -1,20 +1,20 @@
-var express = require('express');
-const bodyParser = require('body-parser');
-const User = require('../models/user');
-var passport = require('passport');
-var authenticate = require('../authenticate');
+var express = require("express");
+const bodyParser = require("body-parser");
+const User = require("../models/user");
+var passport = require("passport");
+var authenticate = require("../authenticate");
 
 var router = express.Router();
 router.use(bodyParser.json());
 
 router
-  .route('/')
+  .route("/")
   .get(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     User.find({})
       .then(
         (users) => {
           res.statusCode = 200;
-          res.setHeader('Content-Type', 'application/json');
+          res.setHeader("Content-Type", "application/json");
           res.json(users);
         },
         (err) => next(err)
@@ -22,7 +22,7 @@ router
       .catch((err) => next(err));
   });
 
-router.post('/signup', (req, res, next) => {
+router.post("/signup", (req, res, next) => {
   User.register(
     new User({ username: req.body.username }),
     req.body.password,
@@ -30,7 +30,7 @@ router.post('/signup', (req, res, next) => {
       //if given username already exist
       if (err) {
         res.statusCode = 500;
-        res.setHeader('Content-Type', 'application/json');
+        res.setHeader("Content-Type", "application/json");
         res.json({ err: err });
       } else {
         if (req.body.firstname) {
@@ -42,14 +42,14 @@ router.post('/signup', (req, res, next) => {
         user.save((err, user) => {
           if (err) {
             res.statusCode = 500;
-            res.setHeader('Content-Type', 'application/json');
+            res.setHeader("Content-Type", "application/json");
             res.json({ err: err });
             return;
           }
-          passport.authenticate('local')(req, res, () => {
+          passport.authenticate("local")(req, res, () => {
             res.statusCode = 200;
-            res.setHeader('Content-Type', 'application/json');
-            res.json({ success: true, status: 'Registiration Succesful' });
+            res.setHeader("Content-Type", "application/json");
+            res.json({ success: true, status: "Registiration Succesful" });
           });
         });
       }
@@ -57,28 +57,45 @@ router.post('/signup', (req, res, next) => {
   );
 });
 
-router.post('/login', passport.authenticate('local'), (req, res) => {
+router.post("/login", passport.authenticate("local"), (req, res) => {
   var token = authenticate.getToken({ _id: req.user._id });
   res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
+  res.setHeader("Content-Type", "application/json");
   res.json({
     success: true,
     token: token,
-    status: 'You are succesfully logged in',
+    status: "You are succesfully logged in",
   });
 });
 
-router.get('/logout', (req, res) => {
+router.get("/logout", (req, res) => {
   if (req.session) {
     //to remove information from server side
     req.session.destroy();
-    res.clearCookie('session-id');
-    res.redirect('/');
+    res.clearCookie("session-id");
+    res.redirect("/");
   } else {
-    var err = new Error('You are not logged in');
+    var err = new Error("You are not logged in");
     err.statusCode = 403;
     next(err);
   }
 });
+
+router.get(
+  "/facebook/token",
+  passport.authenticate("facebook-token"),
+  (req, res) => {
+    if (req.user) {
+      var token = authenticate.getToken({ _id: req.user._id });
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "application/json");
+      res.json({
+        success: true,
+        token: token,
+        status: "You are succesfully logged in",
+      });
+    }
+  }
+);
 
 module.exports = router;

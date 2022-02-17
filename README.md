@@ -104,3 +104,23 @@ Any user or an Admin cannot update or delete the comment posted by other users.
   openssl req -new -key private.key -out cert.csr
   openssl x509 -req -in cert.csr -signkey private.key -out certificate.pem
 ```
+
+# OAuth2 with Facebook
+
+Add authorization to header in postman like below
+
+```
+  Authorization - Bearer {access-token}
+```
+
+or
+
+```
+  access_token - {access-token}
+```
+
+or add access token to end of link as query
+
+```
+  https://localhost:3443/users/facebook/token?access_token={access-token}
+```
